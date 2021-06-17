@@ -11,11 +11,6 @@ SET(USE_TESTS ${CMAKE_TESTING_ENABLED})
 SET(WITH_TOOLS TRUE CACHE BOOL "enable bitcoin tool cli application")
 SET(WITH_NET FALSE CACHE BOOL "enable net functions")
 SET(RANDOM_DEVICE "/dev/urandom" CACHE STRING "set the device to read random data from")
-IF(WITH_TOOLS)
-    SET(WITH_LOGDB TRUE)
-ELSE()
-    SET(WITH_LOGDB FALSE)
-ENDIF()
 
 IF(WITH_NET)
     FIND_LIBRARY(LIBEVENT event_core REQUIRED)
@@ -43,9 +38,6 @@ IF(WITH_TOOLS)
 ENDIF()
 IF(WITH_NET)
     ADD_DEFINITIONS(-DWITH_NET=1)
-ENDIF()
-IF(WITH_LOGDB)
-    ADD_DEFINITIONS(-DWITH_LOGDB=1)
 ENDIF()
 FILE(TOUCH src/libbtc-config.h)
 
@@ -163,7 +155,6 @@ TARGET_SOURCES(${LIBBTC_NAME} PRIVATE ${SECP256K1})
 
 INCLUDE_DIRECTORIES(
     include
-    src/logdb/include
     src/secp256k1
     ${GMP_INSTALL_DIR}/include)
 
@@ -190,32 +181,6 @@ IF(USE_TESTS)
     )
     TARGET_LINK_LIBRARIES(tests ${LIBBTC_NAME})
     ADD_TEST(NAME ${LIBBTC_NAME}_tests COMMAND tests)
-ENDIF()
-
-IF(WITH_LOGDB)
-    TARGET_SOURCES(${LIBBTC_NAME} PRIVATE
-        src/logdb/logdb_core.c
-        src/logdb/logdb_memdb_llist.c
-        src/logdb/logdb_memdb_rbtree.c
-        src/logdb/logdb_rec.c
-        src/logdb/red_black_tree.c
-    )
-    INSTALL(FILES
-        src/logdb/include/logdb/logdb_base.h
-        src/logdb/include/logdb/logdb_core.h
-        src/logdb/include/logdb/logdb_memdb_llist.h
-        src/logdb/include/logdb/logdb_memdb_rbtree.h
-        src/logdb/include/logdb/logdb_rec.h
-        src/logdb/include/logdb/logdb.h
-        src/logdb/include/logdb/red_black_tree.h
-        DESTINATION include/logdb
-    )
-    IF(USE_TESTS)
-        TARGET_SOURCES(tests PRIVATE
-            src/logdb/test/logdb_tests.c
-            src/logdb/test/tests_red_black_tree.c
-        )
-    ENDIF()
 ENDIF()
 
 IF(WITH_NET)

@@ -34,9 +34,6 @@
 
 LIBBTC_BEGIN_DECL
 
-#include <logdb/logdb.h>
-#include <logdb/logdb_rec.h>
-
 /* headers database interface, flexible function pointers in
    order to support multiple backends
 */

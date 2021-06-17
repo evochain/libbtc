@@ -94,7 +94,7 @@ libbtc_la_SOURCES += \
     src/trezor-crypto/sha2.c \
     src/trezor-crypto/sha3.c
 
-libbtc_la_CFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/src/logdb/include
+libbtc_la_CFLAGS = -I$(top_srcdir)/include 
 libbtc_la_LIBADD = $(LIBSECP256K1)
 
 if USE_TESTS
@@ -124,32 +124,6 @@ tests_CFLAGS = $(libbtc_la_CFLAGS)
 tests_CPPFLAGS = -I$(top_srcdir)/src
 tests_LDFLAGS = -static
 TESTS = tests
-endif
-
-if WITH_LOGDB
-libbtc_la_SOURCES += \
-    src/logdb/logdb_core.c \
-    src/logdb/logdb_memdb_llist.c \
-    src/logdb/logdb_memdb_rbtree.c \
-    src/logdb/logdb_rec.c \
-    src/logdb/red_black_tree.c
-
-logdbincludedir = $(includedir)/logdb
-logdbinclude_HEADERS = \
-    src/logdb/include/logdb/logdb_base.h \
-    src/logdb/include/logdb/logdb_core.h \
-    src/logdb/include/logdb/logdb_memdb_llist.h \
-    src/logdb/include/logdb/logdb_memdb_rbtree.h \
-    src/logdb/include/logdb/logdb_rec.h \
-    src/logdb/include/logdb/logdb.h \
-    src/logdb/include/logdb/red_black_tree.h
-
-if USE_TESTS
-tests_SOURCES += \
-    src/logdb/test/logdb_tests.c \
-    src/logdb/test/tests_red_black_tree.c \
-    src/logdb/test/logdb_tests_sample.h
-endif
 endif
 
 if WITH_NET
