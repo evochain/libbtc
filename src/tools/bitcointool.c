@@ -29,7 +29,6 @@
 #include <btc/bip32.h>
 #include <btc/chainparams.h>
 #include <btc/ecc.h>
-#include <btc/protocol.h>
 #include <btc/serialize.h>
 #include <btc/tool.h>
 #include <btc/tx.h>
