@@ -9,20 +9,11 @@ PROJECT(lib${LIBBTC_NAME} VERSION 0.1)
 INCLUDE(CTest)
 SET(USE_TESTS ${CMAKE_TESTING_ENABLED})
 SET(WITH_TOOLS TRUE CACHE BOOL "enable bitcoin tool cli application")
-SET(WITH_NET FALSE CACHE BOOL "enable net functions")
 SET(RANDOM_DEVICE "/dev/urandom" CACHE STRING "set the device to read random data from")
-
-IF(WITH_NET)
-    FIND_LIBRARY(LIBEVENT event_core REQUIRED)
-    IF(WIN32)
-        FIND_LIBRARY(LIBEVENT_PTHREADS event_pthreads REQUIRED)
-    ENDIF()
-ENDIF()
 
 MESSAGE(STATUS "")
 MESSAGE(STATUS "Options used to compile and link:")
 MESSAGE(STATUS "  WITH_TOOLS    = ${WITH_TOOLS}")
-MESSAGE(STATUS "  WITH_NET      = ${WITH_NET}")
 MESSAGE(STATUS "")
 
 ADD_DEFINITIONS(
@@ -35,9 +26,6 @@ IF(USE_TESTS)
 ENDIF()
 IF(WITH_TOOLS)
     ADD_DEFINITIONS(-DWITH_TOOLS=1)
-ENDIF()
-IF(WITH_NET)
-    ADD_DEFINITIONS(-DWITH_NET=1)
 ENDIF()
 FILE(TOUCH src/libbtc-config.h)
 
@@ -183,33 +171,6 @@ IF(USE_TESTS)
     ADD_TEST(NAME ${LIBBTC_NAME}_tests COMMAND tests)
 ENDIF()
 
-IF(WITH_NET)
-    INSTALL(FILES
-        include/btc/headersdb.h
-        include/btc/headersdb_file.h
-        include/btc/protocol.h
-        include/btc/net.h
-        include/btc/netspv.h
-        DESTINATION include/btc
-    )
-    TARGET_SOURCES(${LIBBTC_NAME} PRIVATE
-        src/headersdb_file.c
-        src/net.c
-        src/netspv.c
-        src/protocol.c
-    )
-
-    TARGET_LINK_LIBRARIES(${LIBBTC_NAME} ${LIBEVENT} ${LIBEVENT_PTHREADS})
-
-    IF(USE_TESTS)
-        TARGET_SOURCES(tests PRIVATE
-            test/net_tests.c
-            test/netspv_tests.c
-            test/protocol_tests.c
-        )
-    ENDIF()
-ENDIF()
-
 IF(WITH_TOOLS)
     IF(USE_TESTS)
         TARGET_SOURCES(tests PRIVATE
@@ -222,15 +183,5 @@ IF(WITH_TOOLS)
     TARGET_LINK_LIBRARIES(bitcointool ${LIBBTC_NAME})
     TARGET_INCLUDE_DIRECTORIES(bitcointool PRIVATE src)
 
-    IF(WITH_NET)
-        ADD_EXECUTABLE(bitcoin-send-tx src/tools/bitcoin-send-tx.c)
-        INSTALL(TARGETS bitcoin-send-tx RUNTIME)
-        TARGET_LINK_LIBRARIES(bitcoin-send-tx ${LIBBTC_NAME})
-        TARGET_INCLUDE_DIRECTORIES(bitcoin-send-tx PRIVATE src)
-        ADD_EXECUTABLE(bitcoin-spv src/tools/bitcoin-spv.c)
-        INSTALL(TARGETS bitcoin-spv RUNTIME)
-        TARGET_LINK_LIBRARIES(bitcoin-spv ${LIBBTC_NAME})
-        TARGET_INCLUDE_DIRECTORIES(bitcoin-spv PRIVATE src)
-    ENDIF()
 ENDIF()
 

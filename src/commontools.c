@@ -11,9 +11,6 @@
 #include <btc/bip32.h>
 #include <btc/ecc.h>
 #include <btc/ecc_key.h>
-#ifdef WITH_NET
-#include <btc/net.h>
-#endif
 #include <btc/random.h>
 #include <btc/serialize.h>
 #include <btc/tx.h>

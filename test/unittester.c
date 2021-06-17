@@ -65,12 +65,6 @@ extern void test_eckey();
 extern void test_tool();
 #endif
 
-#ifdef WITH_NET
-extern void test_net_basics_plus_download_block();
-extern void test_protocol();
-extern void test_netspv();
-#endif
-
 extern void btc_ecc_start();
 extern void btc_ecc_stop();
 
@@ -113,13 +107,6 @@ int main()
 
 #ifdef WITH_TOOLS
     u_run_test(test_tool);
-#endif
-
-#ifdef WITH_NET
-    u_run_test(test_netspv);
-
-    u_run_test(test_protocol);
-    u_run_test(test_net_basics_plus_download_block);
 #endif
 
     btc_ecc_stop();

@@ -126,32 +126,6 @@ tests_LDFLAGS = -static
 TESTS = tests
 endif
 
-if WITH_NET
-libbtcinclude_HEADERS += \
-    include/btc/headersdb.h \
-    include/btc/headersdb_file.h \
-    include/btc/protocol.h \
-    include/btc/net.h \
-    include/btc/netspv.h
-
-libbtc_la_SOURCES += \
-    src/headersdb_file.c \
-    src/net.c \
-    src/netspv.c \
-    src/protocol.c
-
-libbtc_la_LIBADD += $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
-libbtc_la_CFLAGS += $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
-
-if USE_TESTS
-tests_SOURCES += \
-    test/net_tests.c \
-    test/netspv_tests.c \
-    test/protocol_tests.c
-tests_LDADD += $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
-endif
-endif
-
 if WITH_TOOLS
 if USE_TESTS
 tests_SOURCES += \
@@ -165,24 +139,6 @@ bitcointool_SOURCES = \
 bitcointool_CFLAGS = $(libbtc_la_CFLAGS)
 bitcointool_CPPFLAGS = -I$(top_srcdir)/src
 bitcointool_LDFLAGS = -static
-
-if WITH_NET
-inst_PROGRAMS += bitcoin-send-tx
-bitcoin_send_tx_LDADD = libbtc.la $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
-bitcoin_send_tx_SOURCES = \
-    src/tools/bitcoin-send-tx.c
-bitcoin_send_tx_CFLAGS = $(libbtc_la_CFLAGS) $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
-bitcoin_send_tx_CPPFLAGS = -I$(top_srcdir)/src
-bitcoin_send_tx_LDFLAGS = -static
-
-inst_PROGRAMS += bitcoin-spv
-bitcoin_spv_LDADD = libbtc.la
-bitcoin_spv_SOURCES = \
-    src/tools/bitcoin-spv.c
-bitcoin_spv_CFLAGS = $(libbtc_la_CFLAGS)
-bitcoin_spv_CPPFLAGS = -I$(top_srcdir)/src
-bitcoin_spv_LDFLAGS = -static
-endif
 
 endif
 
