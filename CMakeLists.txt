@@ -9,10 +9,9 @@ PROJECT(lib${LIBBTC_NAME} VERSION 0.1)
 INCLUDE(CTest)
 SET(USE_TESTS ${CMAKE_TESTING_ENABLED})
 SET(WITH_TOOLS TRUE CACHE BOOL "enable bitcoin tool cli application")
-SET(WITH_WALLET FALSE CACHE BOOL "enable wallet/database functions")
 SET(WITH_NET FALSE CACHE BOOL "enable net functions")
 SET(RANDOM_DEVICE "/dev/urandom" CACHE STRING "set the device to read random data from")
-IF(WITH_TOOLS OR WITH_WALLET)
+IF(WITH_TOOLS)
     SET(WITH_LOGDB TRUE)
 ELSE()
     SET(WITH_LOGDB FALSE)
@@ -27,7 +26,6 @@ ENDIF()
 
 MESSAGE(STATUS "")
 MESSAGE(STATUS "Options used to compile and link:")
-MESSAGE(STATUS "  WITH_WALLET   = ${WITH_WALLET}")
 MESSAGE(STATUS "  WITH_TOOLS    = ${WITH_TOOLS}")
 MESSAGE(STATUS "  WITH_NET      = ${WITH_NET}")
 MESSAGE(STATUS "")
@@ -42,9 +40,6 @@ IF(USE_TESTS)
 ENDIF()
 IF(WITH_TOOLS)
     ADD_DEFINITIONS(-DWITH_TOOLS=1)
-ENDIF()
-IF(WITH_WALLET)
-    ADD_DEFINITIONS(-DWITH_WALLET=1)
 ENDIF()
 IF(WITH_NET)
     ADD_DEFINITIONS(-DWITH_NET=1)
@@ -219,21 +214,6 @@ IF(WITH_LOGDB)
         TARGET_SOURCES(tests PRIVATE
             src/logdb/test/logdb_tests.c
             src/logdb/test/tests_red_black_tree.c
-        )
-    ENDIF()
-ENDIF()
-
-IF(WITH_WALLET)
-    INSTALL(FILES
-        include/btc/wallet.h
-        DESTINATION include/btc
-    )
-    TARGET_SOURCES(${LIBBTC_NAME} PRIVATE
-        src/wallet.c
-    )
-    IF(USE_TESTS)
-        TARGET_SOURCES(tests PRIVATE
-            test/wallet_tests.c
         )
     ENDIF()
 ENDIF()

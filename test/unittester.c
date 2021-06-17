@@ -61,10 +61,6 @@ extern void test_tx_sign();
 extern void test_scripts();
 extern void test_eckey();
 
-#ifdef WITH_WALLET
-extern void test_wallet();
-#endif
-
 #ifdef WITH_TOOLS
 extern void test_tool();
 #endif
@@ -114,10 +110,6 @@ int main()
     u_run_test(test_script_op_codeseperator);
 
     u_run_test(test_eckey);
-
-#ifdef WITH_WALLET
-    //u_run_test(test_wallet);
-#endif
 
 #ifdef WITH_TOOLS
     u_run_test(test_tool);

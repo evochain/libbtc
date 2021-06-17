@@ -36,7 +36,6 @@
 #include <btc/tool.h>
 #include <btc/tx.h>
 #include <btc/utils.h>
-#include <btc/wallet.h>
 
 #include <assert.h>
 #include <getopt.h>
@@ -166,49 +165,6 @@ int main(int argc, char* argv[])
         btc_spv_client* client = btc_spv_client_new(chain, debug, (dbfile && (dbfile[0] == '0' || (strlen(dbfile) > 1 && dbfile[0] == 'n' && dbfile[0] == 'o'))) ? true : false);
         client->header_message_processed = spv_header_message_processed;
         client->sync_completed = spv_sync_completed;
-        #if WITH_WALLEt
-        btc_wallet *wallet = btc_wallet_new(chain);
-        int error;
-        btc_bool created;
-        btc_bool res = btc_wallet_load(wallet, "wallet.db", &error, &created);
-        if (!res) {
-            fprintf(stdout, "Loading wallet failed\n");
-            exit(EXIT_FAILURE);
-        }
-        if (created) {
-            // create a new key
-
-            btc_hdnode node;
-            uint8_t seed[32];
-            res = btc_random_bytes(seed, sizeof(seed), true);
-            if (!res) {
-                fprintf(stdout, "Generating random bytes failed\n");
-                exit(EXIT_FAILURE);
-            }
-            btc_hdnode_from_seed(seed, sizeof(seed), &node);
-            btc_wallet_set_master_key_copy(wallet, &node);
-        }
-        else {
-            // ensure we have a key
-            // TODO
-        }
-
-        btc_wallet_hdnode* node = btc_wallet_next_key(wallet);
-        size_t strsize = 128;
-        char str[strsize];
-        btc_hdnode_get_p2pkh_address(node->hdnode, chain, str, strsize);
-        printf("Wallet addr: %s (child %d)\n", str, node->hdnode->child_num);
-
-        vector *addrs = vector_new(1, free);
-        btc_wallet_get_addresses(wallet, addrs);
-        for (unsigned int i = 0; i < addrs->len; i++) {
-            char* addr= vector_idx(addrs, i);
-            printf("Addr: %s\n", addr);
-        }
-        vector_free(addrs, true);
-        client->sync_transaction = btc_wallet_check_transaction;
-        client->sync_transaction_ctx = wallet;
-        #endif
         if (!btc_spv_client_load(client, (dbfile ? dbfile : "headers.db"))) {
             printf("Could not load or create headers database...aborting\n");
             ret = EXIT_FAILURE;

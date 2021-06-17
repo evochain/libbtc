@@ -152,19 +152,6 @@ tests_SOURCES += \
 endif
 endif
 
-if WITH_WALLET
-libbtcinclude_HEADERS += \
-    include/btc/wallet.h
-
-libbtc_la_SOURCES += \
-    src/wallet.c
-
-if USE_TESTS
-tests_SOURCES += \
-    test/wallet_tests.c
-endif
-endif
-
 if WITH_NET
 libbtcinclude_HEADERS += \
     include/btc/headersdb.h \
